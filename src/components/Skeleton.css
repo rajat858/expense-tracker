@@ -1,0 +1,54 @@
+.innerBox {
+  background-color: #3b3b3b;
+  min-width: 90%;
+  height: 90%;
+  padding: 4rem 3rem;
+}
+div {
+  border: 1px solid red;
+}
+.title {
+  text-align: left;
+  margin: 0;
+  color: white;
+}
+h2 {
+  text-align: left;
+  margin: 0;
+  color: white;
+}
+.a2 {
+  background-color: #626262;
+  height: 17rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.wallet {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 42rem;
+}
+.walletBal {
+  height: 9rem;
+  width: 17rem;
+  background-color: #9b9b9b;
+}
+.piechart {
+  width: 25rem;
+}
+
+.a3 {
+  display: flex;
+  justify-content: space-between;
+  height: 23rem;
+}
+
+.recent {
+  width: 42rem;
+}
+
+.topexpense {
+  width: 25rem;
+}
