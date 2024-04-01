@@ -28,7 +28,7 @@ function Skeleton() {
     expenseItem.title &&
       expenseItem.price &&
       !isNaN(Number(expenseItem.price)) &&
-      Number(expenseItem.price) >= 0 &&
+      Number(expenseItem.price) > 0 &&
       expenseItem.category &&
       expenseItem.date &&
       new Date(expenseItem.date) <= new Date().setHours(23, 59, 59, 999) //comparing date with current date with end of day time
@@ -130,15 +130,18 @@ function Skeleton() {
       }
       return item;
     });
-
-    if (
-      Validator(currentItem) && previousPrice>balance && ((balance+previousPrice)-Number(currentItem.price))>=0
+    
+    if(!Validator(currentItem)){
+       console.log("not a valid expense")
+    }
+    else if (((balance+previousPrice)-Number(currentItem.price))>=0
     ) {
       setBalance(
         (prevBalance) =>(prevBalance + previousPrice) - Number(currentItem.price)
       );
       setFinalExpenses(()=>updatedExpenses);
     }
+  
 
     setIsEditModalOpen(false);
     
