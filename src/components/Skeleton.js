@@ -23,14 +23,23 @@ function Skeleton() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); //table states
   const [currentItem, setCurrentItem] = useState({});//stores the  transaction when corresponding edit button is clicked
 
-  const expenseValidator = (expenseItem)=>{ //verifying valid expense when adding and editing 
-    if(expenseItem.title &&
+  const Validator = (expenseItem) => { //verifying valid expense while editing
+  if(
+    expenseItem.title &&
       expenseItem.price &&
       !isNaN(Number(expenseItem.price)) &&
       Number(expenseItem.price) >= 0 &&
       expenseItem.category &&
       expenseItem.date &&
-      new Date(expenseItem.date) <= new Date().setHours(23, 59, 59, 999) && //comparing date with current date with end of day time
+      new Date(expenseItem.date) <= new Date().setHours(23, 59, 59, 999) //comparing date with current date with end of day time
+  )
+  {
+    return true
+  }
+  return false
+  }
+  const addExpenseValidator = (expenseItem)=>{ //verifying valid expense when adding 
+    if(Validator(expenseItem)&&
       balance - Number(expense.price) >= 0 //so the user won't be able to add expense greater than balance
     )
     {
@@ -79,7 +88,7 @@ function Skeleton() {
   const handleAddExpenseSubmit = (e) => {
     e.preventDefault();
     if (
-     expenseValidator(expense)
+     addExpenseValidator(expense)
     ) {
       setBalance((prevBalance) => prevBalance - Number(expense.price));
       const addId = { id: id };
@@ -123,10 +132,10 @@ function Skeleton() {
     });
 
     if (
-      expenseValidator(currentItem)
+      Validator(currentItem) && previousPrice>balance && ((balance+previousPrice)-Number(currentItem.price))>=0
     ) {
       setBalance(
-        (prevBalance) => (prevBalance + previousPrice) - Number(currentItem.price)
+        (prevBalance) =>(prevBalance + previousPrice) - Number(currentItem.price)
       );
       setFinalExpenses(()=>updatedExpenses);
     }
@@ -137,19 +146,23 @@ function Skeleton() {
 
   //---------------------------------------------DELETE functionality------------------------------------------
   const handleDelete =(item)=>{
-    setCurrentItem(()=>item);
-    let previousPrice = Number(currentItem.price);
+    //console.log("start")
+   // setCurrentItem(()=>item);
+    let previousPrice = Number(item.price);
   const updatedExpenses = finalExpenses.filter((expItem) => (expItem.id !== item.id))
 
   if (
-    expenseValidator(currentItem)
+    Validator(item)
   ) {
     setBalance(
-      (prevBalance) => (prevBalance + previousPrice) - Number(currentItem.price)
+      (prevBalance) => (prevBalance + previousPrice)
     );
     setFinalExpenses(()=>updatedExpenses);
   }
-
+  else{
+    console.log("validator failed")
+  }
+ console.log("END", updatedExpenses, finalExpenses)
 
   }
 
