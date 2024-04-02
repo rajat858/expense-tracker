@@ -1,9 +1,9 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext } from "react";
 import "./Skeleton.css";
-import ReactModal from "react-modal";
 import AddBalance from "./AddBalance";
 import AddExpense from "./AddExpense";
-import Expenses_table from "./Expenses_table";
+import ExpensesTable from "./Expenses_table";
+import PChart from "./PChart";
 export const MyContext = createContext();
 function Skeleton() {
   const [balance, setBalance] = useState(0);
@@ -21,33 +21,34 @@ function Skeleton() {
   const [finalExpenses, setFinalExpenses] = useState([]);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); //table states
-  const [currentItem, setCurrentItem] = useState({});//stores the  transaction when corresponding edit button is clicked
+  const [currentItem, setCurrentItem] = useState({}); //stores the  transaction when corresponding edit button is clicked
 
-  const Validator = (expenseItem) => { //verifying valid expense while editing
-  if(
-    expenseItem.title &&
+  const Validator = (expenseItem) => {
+    //verifying valid expense while editing
+    if (
+      expenseItem.title &&
       expenseItem.price &&
       !isNaN(Number(expenseItem.price)) &&
       Number(expenseItem.price) > 0 &&
       expenseItem.category &&
       expenseItem.date &&
       new Date(expenseItem.date) <= new Date().setHours(23, 59, 59, 999) //comparing date with current date with end of day time
-  )
-  {
-    return true
-  }
-  return false
-  }
-  const addExpenseValidator = (expenseItem)=>{ //verifying valid expense when adding 
-    if(Validator(expenseItem)&&
+    ) {
+      return true;
+    }
+    return false;
+  };
+  const addExpenseValidator = (expenseItem) => {
+    //verifying valid expense when adding
+    if (
+      Validator(expenseItem) &&
       balance - Number(expense.price) >= 0 //so the user won't be able to add expense greater than balance
-    )
-    {
+    ) {
       return true;
     }
 
     return false;
-  }
+  };
   //-----------------------------------------------ADD BALANCE------------------------------------
   const handleIncomeChange = (e) => {
     setIncomeAmount(e.target.value);
@@ -87,9 +88,7 @@ function Skeleton() {
 
   const handleAddExpenseSubmit = (e) => {
     e.preventDefault();
-    if (
-     addExpenseValidator(expense)
-    ) {
+    if (addExpenseValidator(expense)) {
       setBalance((prevBalance) => prevBalance - Number(expense.price));
       const addId = { id: id };
       setExpense((prevExpense) => ({ ...prevExpense, ...addId }));
@@ -114,13 +113,11 @@ function Skeleton() {
     e.preventDefault();
     const { name, value } = e.target;
     setCurrentItem((prevExpense) => ({ ...prevExpense, [name]: value }));
-  }
-    
+  };
 
   const handleEditExpenseSubmit = (e) => {
     e.preventDefault();
-    
-    
+
     let previousPrice;
     const updatedExpenses = finalExpenses.map((item) => {
       //returns an array of object
@@ -130,44 +127,36 @@ function Skeleton() {
       }
       return item;
     });
-    
-    if(!Validator(currentItem)){
-       console.log("not a valid expense")
-    }
-    else if (((balance+previousPrice)-Number(currentItem.price))>=0
-    ) {
+
+    if (!Validator(currentItem)) {
+      console.log("not a valid expense");
+    } else if (balance + previousPrice - Number(currentItem.price) >= 0) {
       setBalance(
-        (prevBalance) =>(prevBalance + previousPrice) - Number(currentItem.price)
+        (prevBalance) => prevBalance + previousPrice - Number(currentItem.price)
       );
-      setFinalExpenses(()=>updatedExpenses);
+      setFinalExpenses(() => updatedExpenses);
     }
-  
 
     setIsEditModalOpen(false);
-    
   };
 
   //---------------------------------------------DELETE functionality------------------------------------------
-  const handleDelete =(item)=>{
+  const handleDelete = (item) => {
     //console.log("start")
-   // setCurrentItem(()=>item);
+    // setCurrentItem(()=>item);
     let previousPrice = Number(item.price);
-  const updatedExpenses = finalExpenses.filter((expItem) => (expItem.id !== item.id))
-
-  if (
-    Validator(item)
-  ) {
-    setBalance(
-      (prevBalance) => (prevBalance + previousPrice)
+    const updatedExpenses = finalExpenses.filter(
+      (expItem) => expItem.id !== item.id
     );
-    setFinalExpenses(()=>updatedExpenses);
-  }
-  else{
-    console.log("validator failed")
-  }
- console.log("END", updatedExpenses, finalExpenses)
 
-  }
+    if (Validator(item)) {
+      setBalance((prevBalance) => prevBalance + previousPrice);
+      setFinalExpenses(() => updatedExpenses);
+    } else {
+      console.log("validator failed");
+    }
+    console.log("END", updatedExpenses, finalExpenses);
+  };
 
   const contextValues = {
     isEditModalOpen,
@@ -176,11 +165,12 @@ function Skeleton() {
     handleEditClick,
     handleEditExpenseSubmit,
     handleEditExpenseChange,
-    handleDelete
+    handleDelete,
   };
 
   
 
+  
   const customStyles = {
     content: {
       display: "flex",
@@ -310,13 +300,16 @@ function Skeleton() {
           />
         </div>
 
-        <div className="piechart">pieCHart</div>
+        <div className="piechart">
+          pieCHart
+          <PChart finalExpenses={finalExpenses} />
+        </div>
       </div>
       <div className="a3">
         <div className="recent">
           <h2 className="title2">Recent Transactions</h2>
           <MyContext.Provider value={contextValues}>
-            <Expenses_table {...{ finalExpenses }} />
+            <ExpensesTable {...{ finalExpenses }} />
           </MyContext.Provider>
 
           {/* <div className="tableDiv">
